@@ -18,7 +18,7 @@ function getCommandArgs(cmd) {
         // Only remove the first instance of the match - the second might be
         // a valid RN CLI command option.
         break;
-      };
+      }
     }
   });
 
@@ -31,10 +31,11 @@ function test(cmd) {
   const commandName = cmd.name();
   const entryFile = cmd.file;
   const skipbuild = cmd.skipbuild;
+  const customBuildCommand = cmd.buildCmd;
   const outputAsXml = cmd.xml;
   const dev = cmd.dev;
   const bootTimeout = cmd.bootTimeout;
-  runTests(commandName, entryFile, skipbuild, dev, outputAsXml, bootTimeout, args);
+  runTests(commandName, customBuildCommand, entryFile, skipbuild, dev, outputAsXml, bootTimeout, args);
 }
 
 // Stop quitting unless we want to
@@ -84,5 +85,38 @@ program
   .option('--xml', 'Write out test results to cavy_results.xml (requires Cavy 3.3.0)')
   .allowUnknownOption()
   .action(cmd => test(cmd));
+
+program
+    .command('run-web')
+    .description('Run cavy spec on Web platform')
+    .option('-f, --file <file>', 'App entry file (defaults to index.js)')
+    .option('-d, --dev', 'Keep report server alive until manually killed')
+    .option(
+        '-t, --boot-timeout <minutes>',
+        'Set how long the CLI should wait for the RN app to boot '
+        + '(is ignored if used with --skipbuild, defaults to 2 minutes, requires Cavy 4.0.0)'
+    )
+    .option('-b, --buildCmd <cmd>', 'Custom build command to build & run the app.')
+    .option('--xml', 'Write out test results to cavy_results.xml (requires Cavy 3.3.0)')
+    .allowUnknownOption()
+    .action(cmd => {
+        cmd.skipbuild = true;
+        test(cmd);
+    });
+
+program
+    .command('run-vega')
+    .description('Run cavy spec on Vega platform')
+    .option('-f, --file <file>', 'App entry file (defaults to index.js)')
+    .option('-d, --dev', 'Keep report server alive until manually killed')
+    .option(
+        '-t, --boot-timeout <minutes>',
+        'Set how long the CLI should wait for the RN app to boot '
+        + '(is ignored if used with --skipbuild, defaults to 2 minutes, requires Cavy 4.0.0)'
+    )
+    .option('-b, --buildCmd <cmd>', 'Custom build command to build & run the app.')
+    .option('--xml', 'Write out test results to cavy_results.xml (requires Cavy 3.3.0)')
+    .allowUnknownOption()
+    .action(cmd => test(cmd));
 
 program.parse(process.argv);
