@@ -35,11 +35,12 @@ function test(cmd) {
   const outputAsXml = cmd.xml;
   const dev = cmd.dev;
   const bootTimeout = cmd.bootTimeout;
-  const keepAliveTimeout = cmd.keepAliveTimeout && parseInt(cmd.keepAliveTimeout, 10);
-  if (Number.isNaN(keepAliveTimeout)) {
-    console.log('cavy: Please provide a numeric keep-alive timeout.');
+  const keepAliveSeconds = cmd.keepAliveTimeout && parseInt(cmd.keepAliveTimeout, 10);
+  if (Number.isNaN(keepAliveSeconds)) {
+    console.log('cavy: Please provide a numeric keep-alive timeout in seconds.');
     process.exit(1);
   }
+  const keepAliveTimeout = keepAliveSeconds ? keepAliveSeconds * 1000 : undefined;
   const screenshots = cmd.screenshots;
   runTests(commandName, customBuildCommand, entryFile, skipbuild, dev, outputAsXml, bootTimeout, keepAliveTimeout, screenshots, args);
 }
@@ -71,8 +72,8 @@ program
     + '(is ignored if used with --skipbuild, defaults to 2 minutes, requires Cavy 4.0.0)'
   )
   .option(
-    '-k, --keep-alive-timeout <milliseconds>',
-    'Set how long the server waits for keep-alive notifications (defaults to 60000)'
+    '-k, --keep-alive-timeout <seconds>',
+    'Set how long the server waits for keep-alive notifications (defaults to 60)'
   )
   .option('--no-screenshots', 'Disable automatic screenshots')
   .option('--xml', 'Write out test results to cavy_results.xml (requires Cavy 3.3.0)')
@@ -94,8 +95,8 @@ program
     + '(is ignored if used with --skipbuild, defaults to 2 minutes, requires Cavy 4.0.0)'
   )
   .option(
-    '-k, --keep-alive-timeout <milliseconds>',
-    'Set how long the server waits for keep-alive notifications (defaults to 60000)'
+    '-k, --keep-alive-timeout <seconds>',
+    'Set how long the server waits for keep-alive notifications (defaults to 60)'
   )
   .option('--no-screenshots', 'Disable automatic screenshots')
   .option('--xml', 'Write out test results to cavy_results.xml (requires Cavy 3.3.0)')
@@ -113,8 +114,8 @@ program
     + '(is ignored if used with --skipbuild, defaults to 2 minutes, requires Cavy 4.0.0)'
   )
     .option(
-        '-k, --keep-alive-timeout <milliseconds>',
-        'Set how long the server waits for keep-alive notifications (defaults to 60000)'
+        '-k, --keep-alive-timeout <seconds>',
+        'Set how long the server waits for keep-alive notifications (defaults to 60)'
     )
     .option('--no-screenshots', 'Disable automatic screenshots')
     .option('-b, --buildCmd <cmd>', 'Custom build command to build & run the app.')
@@ -136,8 +137,8 @@ program
     + '(is ignored if used with --skipbuild, defaults to 2 minutes, requires Cavy 4.0.0)'
   )
     .option(
-        '-k, --keep-alive-timeout <milliseconds>',
-        'Set how long the server waits for keep-alive notifications (defaults to 60000)'
+        '-k, --keep-alive-timeout <seconds>',
+        'Set how long the server waits for keep-alive notifications (defaults to 60)'
     )
     .option('--no-screenshots', 'Disable automatic screenshots')
     .option('-b, --buildCmd <cmd>', 'Custom build command to build & run the app.')
