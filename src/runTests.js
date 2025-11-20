@@ -57,8 +57,10 @@ function getAdbPath() {
 }
 
 // Start test server, listening for test results to be posted.
-function runServer({command, dev, outputAsXml, skipbuild, bootTimeout}) {
+function runServer({command, dev, outputAsXml, skipbuild, bootTimeout, keepAliveTimeout}) {
     server.locals.dev = dev;
+    server.locals.keepAliveTimeout =
+        keepAliveTimeout || server.locals.keepAliveTimeout;
     switch (command) {
         case 'run-android':
             server.locals.platform = 'android';
@@ -107,7 +109,7 @@ function runServer({command, dev, outputAsXml, skipbuild, bootTimeout}) {
 // outputAsXml: whether to write and save the results to XML file
 // bootTimeout: how long the CLI should wait for the RN app to boot.
 // args: any extra arguments the user would usually to pass to `react native run...`
-function runTests(command, customBuildCommand, file, skipbuild, dev, outputAsXml, bootTimeout, args) {
+function runTests(command, customBuildCommand, file, skipbuild, dev, outputAsXml, bootTimeout, keepAliveTimeout, args) {
 
     // Assume entry file is 'index.js' if user doesn't supply one.
     const entryFile = file || 'index.js';
@@ -148,7 +150,7 @@ function runTests(command, customBuildCommand, file, skipbuild, dev, outputAsXml
     });
 
     if (skipbuild) {
-        runServer({command, dev, outputAsXml, skipbuild, bootTimeout});
+        runServer({command, dev, outputAsXml, skipbuild, bootTimeout, keepAliveTimeout});
     } else {
         // Build the app, start the test server and wait for results.
         console.log(`cavy: Running \`npx react-native ${command}\`...`);
@@ -167,7 +169,7 @@ function runTests(command, customBuildCommand, file, skipbuild, dev, outputAsXml
             if (code) {
                 return process.exit(code);
             }
-            runServer({command, dev, outputAsXml, skipbuild, bootTimeout});
+            runServer({command, dev, outputAsXml, skipbuild, bootTimeout, keepAliveTimeout});
         });
     }
 }

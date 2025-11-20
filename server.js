@@ -12,13 +12,14 @@ const server = http.createServer();
 server.locals = {
   platform: undefined,
   appBooted: false,
-  testCount: 0
+  testCount: 0,
+  keepAliveTimeout: 60_000
 };
 
 // Initialize a WebSocket Server instance
 const wss = new WebSocket.Server({server});
 
-const KEEP_ALIVE_TIMEOUT = 60_000;
+const DEFAULT_KEEP_ALIVE_TIMEOUT = 60_000;
 let lastNotify = Date.now();
 let timeout;
 
@@ -99,7 +100,7 @@ function onNotify(screenshot = false) {
     console.log(chalk.red("Did not receive a keep-alive notification in time - app may have crashed."));
     takeScreenshot(server.locals.platform);
     process.exit(1);
-  }, KEEP_ALIVE_TIMEOUT);
+  }, server.locals.keepAliveTimeout || DEFAULT_KEEP_ALIVE_TIMEOUT);
 }
 
 // Internal: Accepts a json report object, console.logs the overall result of

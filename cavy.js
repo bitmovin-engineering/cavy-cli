@@ -35,7 +35,12 @@ function test(cmd) {
   const outputAsXml = cmd.xml;
   const dev = cmd.dev;
   const bootTimeout = cmd.bootTimeout;
-  runTests(commandName, customBuildCommand, entryFile, skipbuild, dev, outputAsXml, bootTimeout, args);
+  const keepAliveTimeout = cmd.keepAliveTimeout && parseInt(cmd.keepAliveTimeout, 10);
+  if (Number.isNaN(keepAliveTimeout)) {
+    console.log('cavy: Please provide a numeric keep-alive timeout.');
+    process.exit(1);
+  }
+  runTests(commandName, customBuildCommand, entryFile, skipbuild, dev, outputAsXml, bootTimeout, keepAliveTimeout, args);
 }
 
 // Stop quitting unless we want to
@@ -64,6 +69,10 @@ program
     'Set how long the CLI should wait for the RN app to boot '
     + '(is ignored if used with --skipbuild, defaults to 2 minutes, requires Cavy 4.0.0)'
   )
+  .option(
+    '-k, --keep-alive-timeout <milliseconds>',
+    'Set how long the server waits for keep-alive notifications (defaults to 60000)'
+  )
   .option('--xml', 'Write out test results to cavy_results.xml (requires Cavy 3.3.0)')
   .allowUnknownOption()
   .action(cmd => test(cmd));
@@ -82,6 +91,10 @@ program
     'Set how long the CLI should wait for the RN app to boot '
     + '(is ignored if used with --skipbuild, defaults to 2 minutes, requires Cavy 4.0.0)'
   )
+  .option(
+    '-k, --keep-alive-timeout <milliseconds>',
+    'Set how long the server waits for keep-alive notifications (defaults to 60000)'
+  )
   .option('--xml', 'Write out test results to cavy_results.xml (requires Cavy 3.3.0)')
   .allowUnknownOption()
   .action(cmd => test(cmd));
@@ -92,9 +105,13 @@ program
     .option('-f, --file <file>', 'App entry file (defaults to index.js)')
     .option('-d, --dev', 'Keep report server alive until manually killed')
     .option(
-        '-t, --boot-timeout <minutes>',
-        'Set how long the CLI should wait for the RN app to boot '
-        + '(is ignored if used with --skipbuild, defaults to 2 minutes, requires Cavy 4.0.0)'
+    '-t, --boot-timeout <minutes>',
+    'Set how long the CLI should wait for the RN app to boot '
+    + '(is ignored if used with --skipbuild, defaults to 2 minutes, requires Cavy 4.0.0)'
+  )
+    .option(
+        '-k, --keep-alive-timeout <milliseconds>',
+        'Set how long the server waits for keep-alive notifications (defaults to 60000)'
     )
     .option('-b, --buildCmd <cmd>', 'Custom build command to build & run the app.')
     .option('--xml', 'Write out test results to cavy_results.xml (requires Cavy 3.3.0)')
@@ -110,9 +127,13 @@ program
     .option('-f, --file <file>', 'App entry file (defaults to index.js)')
     .option('-d, --dev', 'Keep report server alive until manually killed')
     .option(
-        '-t, --boot-timeout <minutes>',
-        'Set how long the CLI should wait for the RN app to boot '
-        + '(is ignored if used with --skipbuild, defaults to 2 minutes, requires Cavy 4.0.0)'
+    '-t, --boot-timeout <minutes>',
+    'Set how long the CLI should wait for the RN app to boot '
+    + '(is ignored if used with --skipbuild, defaults to 2 minutes, requires Cavy 4.0.0)'
+  )
+    .option(
+        '-k, --keep-alive-timeout <milliseconds>',
+        'Set how long the server waits for keep-alive notifications (defaults to 60000)'
     )
     .option('-b, --buildCmd <cmd>', 'Custom build command to build & run the app.')
     .option('--xml', 'Write out test results to cavy_results.xml (requires Cavy 3.3.0)')
