@@ -13,7 +13,8 @@ server.locals = {
   platform: undefined,
   appBooted: false,
   testCount: 0,
-  keepAliveTimeout: 60_000
+  keepAliveTimeout: 60_000,
+  screenshots: true
 };
 
 // Initialize a WebSocket Server instance
@@ -68,7 +69,9 @@ function logTestResult(testResultJson) {
   server.locals.testCount++ ;
   formattedMessage = `${server.locals.testCount}) ${message}`;
 
-  takeScreenshot(server.locals.platform);
+  if (server.locals.screenshots) {
+    takeScreenshot(server.locals.platform);
+  }
 
   if (passed) {
     // Log green test result if test passed
@@ -93,12 +96,14 @@ function onNotify(screenshot = false) {
   console.log(chalk.white(`[${new Date().toLocaleTimeString()}] Received notification.`));
   lastNotify = Date.now();
   clearTimeout(timeout);
-  if (screenshot) {
+  if (screenshot && server.locals.screenshots) {
     takeScreenshot(server.locals.platform);
   }
   timeout = setTimeout(() => {
     console.log(chalk.red("Did not receive a keep-alive notification in time - app may have crashed."));
-    takeScreenshot(server.locals.platform);
+    if (server.locals.screenshots) {
+      takeScreenshot(server.locals.platform);
+    }
     process.exit(1);
   }, server.locals.keepAliveTimeout || DEFAULT_KEEP_ALIVE_TIMEOUT);
 }

@@ -40,7 +40,8 @@ function test(cmd) {
     console.log('cavy: Please provide a numeric keep-alive timeout.');
     process.exit(1);
   }
-  runTests(commandName, customBuildCommand, entryFile, skipbuild, dev, outputAsXml, bootTimeout, keepAliveTimeout, args);
+  const screenshots = cmd.screenshots;
+  runTests(commandName, customBuildCommand, entryFile, skipbuild, dev, outputAsXml, bootTimeout, keepAliveTimeout, screenshots, args);
 }
 
 // Stop quitting unless we want to
@@ -73,6 +74,7 @@ program
     '-k, --keep-alive-timeout <milliseconds>',
     'Set how long the server waits for keep-alive notifications (defaults to 60000)'
   )
+  .option('--no-screenshots', 'Disable automatic screenshots')
   .option('--xml', 'Write out test results to cavy_results.xml (requires Cavy 3.3.0)')
   .allowUnknownOption()
   .action(cmd => test(cmd));
@@ -95,6 +97,7 @@ program
     '-k, --keep-alive-timeout <milliseconds>',
     'Set how long the server waits for keep-alive notifications (defaults to 60000)'
   )
+  .option('--no-screenshots', 'Disable automatic screenshots')
   .option('--xml', 'Write out test results to cavy_results.xml (requires Cavy 3.3.0)')
   .allowUnknownOption()
   .action(cmd => test(cmd));
@@ -113,6 +116,7 @@ program
         '-k, --keep-alive-timeout <milliseconds>',
         'Set how long the server waits for keep-alive notifications (defaults to 60000)'
     )
+    .option('--no-screenshots', 'Disable automatic screenshots')
     .option('-b, --buildCmd <cmd>', 'Custom build command to build & run the app.')
     .option('--xml', 'Write out test results to cavy_results.xml (requires Cavy 3.3.0)')
     .allowUnknownOption()
@@ -135,6 +139,7 @@ program
         '-k, --keep-alive-timeout <milliseconds>',
         'Set how long the server waits for keep-alive notifications (defaults to 60000)'
     )
+    .option('--no-screenshots', 'Disable automatic screenshots')
     .option('-b, --buildCmd <cmd>', 'Custom build command to build & run the app.')
     .option('--xml', 'Write out test results to cavy_results.xml (requires Cavy 3.3.0)')
     .allowUnknownOption()
