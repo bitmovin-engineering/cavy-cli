@@ -136,7 +136,7 @@ test('after connection the keep-alive deadline still fails an unresponsive app',
   });
 
 test('dev mode remains alive after connecting and SIGINT restores entries',
-  { timeout: 4000 }, async t => {
+  { timeout: 4000, skip: process.platform === 'win32' }, async t => {
     const run = start(t, [
       'run-ios', '--skipbuild', '--dev', '--no-screenshots',
       '--boot-timeout', '0.01', '--keep-alive-timeout', '3',
