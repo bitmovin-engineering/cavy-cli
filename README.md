@@ -28,6 +28,25 @@ Cavy and cavy-cli next.
 
 ## 💯 Contributing
 
+### Prebuilt apps and startup deadlines
+
+`--skipbuild` starts the reporter without building the app. The app must still
+connect before `--boot-timeout` expires; this deadline defaults to two minutes
+and starts when the reporter begins listening. Fractional minutes are supported.
+Use a larger explicit value when simulator startup is part of your launch:
+
+```sh
+cavy run-ios --skipbuild --boot-timeout 10 --xml
+```
+
+Once the app connects, `--keep-alive-timeout` controls the wait for subsequent
+notifications. A boot timeout exits with code 1; reported assertion failures
+continue to exit with code 42. `run-web` also uses reporter-only startup and
+observes the same boot deadline.
+
+Run `npm test` with Node.js 18 or newer for the CLI regression tests. Port 8082
+must be free; the tests start real reporter processes.
+
 Before contributing, please read the [code of conduct](CODE_OF_CONDUCT.md).
 
 You can test your local version of cavy-cli by running `npm link` within the

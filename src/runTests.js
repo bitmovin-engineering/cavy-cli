@@ -82,23 +82,15 @@ function runServer({command, dev, outputAsXml, skipbuild, bootTimeout, keepAlive
             runAdbReverse();
         }
         console.log(`cavy: Listening on port 8082 for test results...`);
-        // Do not set a timeout if the app is already built.
-        if (skipbuild) {
-            if (bootTimeout) {
-                console.log('--boot-timeout is ignored when used with --skip-build');
+        // A prebuilt app still has to connect. Bound that wait in every mode.
+        const timeout = bootTimeout || BOOT_TIMEOUT;
+        setTimeout(() => {
+            if (!server.locals.appBooted) {
+                console.log(`No response from Cavy within ${timeout} minutes.`);
+                console.log(`Terminating processes.`);
+                process.exit(1);
             }
-        } else {
-            // bootTimeout defaults to two minutes
-            const timeout = bootTimeout || BOOT_TIMEOUT;
-            setTimeout(() => {
-                if (!server.locals.appBooted) {
-                    console.log(`No response from Cavy within ${timeout} minutes.`);
-                    console.log('Terminating processes.');
-                    process.exit(1);
-                }
-                // Convert bootTimeout to milliseconds
-            }, minsToMillisecs(timeout));
-        }
+        }, minsToMillisecs(timeout));
     });
 }
 
