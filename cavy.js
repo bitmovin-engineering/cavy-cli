@@ -34,7 +34,17 @@ function test(cmd) {
   const customBuildCommand = cmd.buildCmd;
   const outputAsXml = cmd.xml;
   const dev = cmd.dev;
-  const bootTimeout = cmd.bootTimeout;
+  const bootTimeout = cmd.bootTimeout === undefined
+    ? undefined
+    : Number(cmd.bootTimeout);
+  if (bootTimeout !== undefined && (
+    !Number.isFinite(bootTimeout) ||
+    bootTimeout <= 0 ||
+    bootTimeout * 60000 > 2147483647
+  )) {
+    console.log(`cavy: Please provide a positive boot timeout in minutes within the supported timer range.`);
+    process.exit(1);
+  }
   const keepAliveSeconds = cmd.keepAliveTimeout && parseInt(cmd.keepAliveTimeout, 10);
   if (Number.isNaN(keepAliveSeconds)) {
     console.log('cavy: Please provide a numeric keep-alive timeout in seconds.');
@@ -69,7 +79,7 @@ program
   .option(
     '-t, --boot-timeout <minutes>',
     'Set how long the CLI should wait for the RN app to boot '
-    + '(is ignored if used with --skipbuild, defaults to 2 minutes, requires Cavy 4.0.0)'
+    + '(also applies with --skipbuild, defaults to 2 minutes, requires Cavy 4.0.0)'
   )
   .option(
     '-k, --keep-alive-timeout <seconds>',
@@ -92,7 +102,7 @@ program
   .option(
     '-t, --boot-timeout <minutes>',
     'Set how long the CLI should wait for the RN app to boot '
-    + '(is ignored if used with --skipbuild, defaults to 2 minutes, requires Cavy 4.0.0)'
+    + '(also applies with --skipbuild, defaults to 2 minutes, requires Cavy 4.0.0)'
   )
   .option(
     '-k, --keep-alive-timeout <seconds>',
@@ -111,7 +121,7 @@ program
     .option(
     '-t, --boot-timeout <minutes>',
     'Set how long the CLI should wait for the RN app to boot '
-    + '(is ignored if used with --skipbuild, defaults to 2 minutes, requires Cavy 4.0.0)'
+    + '(also applies with --skipbuild, defaults to 2 minutes, requires Cavy 4.0.0)'
   )
     .option(
         '-k, --keep-alive-timeout <seconds>',
@@ -134,7 +144,7 @@ program
     .option(
     '-t, --boot-timeout <minutes>',
     'Set how long the CLI should wait for the RN app to boot '
-    + '(is ignored if used with --skipbuild, defaults to 2 minutes, requires Cavy 4.0.0)'
+    + '(also applies with --skipbuild, defaults to 2 minutes, requires Cavy 4.0.0)'
   )
     .option(
         '-k, --keep-alive-timeout <seconds>',

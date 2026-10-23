@@ -1,3 +1,9 @@
+# Unreleased
+
+- Apply the app boot deadline to `--skipbuild` and reporter-only web runs.
+  Prebuilt apps must connect within two minutes by default, or the explicit
+  `--boot-timeout` value. Reject invalid or overflowing boot timeouts.
+
 # 3.0.0
 
 - Swap to `npx react-native` instead of just `react-native`, which is no
